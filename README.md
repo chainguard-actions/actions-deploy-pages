@@ -1,5 +1,7 @@
 # actions/deploy-pages
 
+GitHub Action to publish artifacts to GitHub Pages for deployments
+
 Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/actions/deploy-pages](https://github.com/actions/deploy-pages).
 
 ## Versions
