@@ -1,7 +1,0 @@
-{
-  "owner": "actions",
-  "name": "deploy-pages",
-  "visibility": "internal",
-  "description": "GitHub Action to publish artifacts to GitHub Pages for deployments",
-  "block_publish": false
-}
