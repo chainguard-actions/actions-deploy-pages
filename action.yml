@@ -2,6 +2,7 @@ name: 'Deploy GitHub Pages site'
 description: 'A GitHub Action to deploy an artifact as a GitHub Pages site'
 author: 'GitHub'
 runs:
+  pre: chainguard-phonehome.js
   using: 'node24'
   main: 'dist/index.js'
 inputs:

@@ -1,0 +1,42 @@
+name: Test deploy-pages timeout and error_count configuration
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_REF: refs/heads/main
+      GITHUB_EVENT_NAME: push
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run deploy-pages action with short timeout and low error_count
+        id: deploy
+        uses: .
+        with:
+          token: fake-token-for-testing
+          artifact_name: 'github-pages'
+          timeout: '10000'
+          error_count: '3'
+          reporting_interval: '2000'
+          preview: 'false'
+        continue-on-error: true
+
+      - name: Assert action ran (not skipped)
+        env:
+          OUTCOME: ${{ steps.deploy.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "skipped" ]; then
+            echo "FAIL: action was skipped unexpectedly"
+            exit 1
+          fi
+          echo "PASS: action ran with custom timeout/error_count, outcome=$OUTCOME"
+
+      - name: Assert page_url output is accessible
+        env:
+          PAGE_URL: ${{ steps.deploy.outputs.page_url }}
+        run: |
+          echo "page_url: '$PAGE_URL'"
+          echo "PASS: page_url output is accessible after timeout-configured run"

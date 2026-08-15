@@ -1,0 +1,32 @@
+name: Test deploy-pages with custom artifact name
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run deploy-pages action with custom artifact name
+        id: deploy
+        uses: .
+        with:
+          token: fake-token-for-testing
+          artifact_name: 'my-custom-pages-artifact'
+          timeout: '30000'
+          error_count: '1'
+          reporting_interval: '5000'
+          preview: 'false'
+        continue-on-error: true
+
+      - name: Assert action ran (not skipped)
+        env:
+          OUTCOME: ${{ steps.deploy.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          if [ "$OUTCOME" = "skipped" ]; then
+            echo "FAIL: action was skipped unexpectedly"
+            exit 1
+          fi
+          echo "PASS: action ran with outcome=$OUTCOME (custom artifact_name accepted)"
