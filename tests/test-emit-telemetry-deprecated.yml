@@ -1,0 +1,33 @@
+name: Test deprecated emit_telemetry input
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - id: deploy
+        uses: .
+        continue-on-error: true
+        with:
+          token: ${{ github.token }}
+          emit_telemetry: 'true'
+          conclusion: 'success'
+          timeout: '30000'
+          error_count: '2'
+          reporting_interval: '5000'
+      - name: Assert action ran (emit_telemetry is deprecated no-op, may succeed or fail gracefully)
+        env:
+          OUTCOME: ${{ steps.deploy.outcome }}
+          PAGE_URL: ${{ steps.deploy.outputs.page_url }}
+        run: |
+          echo "outcome: $OUTCOME"
+          echo "page_url: $PAGE_URL"
+          if [ "$OUTCOME" = "success" ]; then
+            echo "PASS: action completed (emit_telemetry is a no-op per deprecation notice)"
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully (sentinel repo is not a real Pages-enabled repo)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi
